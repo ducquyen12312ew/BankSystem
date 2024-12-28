@@ -1,0 +1,218 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f7f7fc;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu {
+    background: linear-gradient(135deg, #84b9e0, #6ab1eb);
+    padding: 10px 15px; 
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.menu-logo {
+    display: flex;
+    align-items: center;
+}
+
+.menu-logo img {
+    width: 160px;
+    height: 50px;
+    margin-right: 10px;
+}
+.horizontal-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.horizontal-menu li {
+    display: flex;
+    align-items: center;
+    margin: 0 15px;
+}
+
+.horizontal-menu li a {
+    text-decoration: none;
+    font-size: 16px;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.horizontal-menu li a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.horizontal-menu li a svg {
+    margin-right: 8px;
+}
+.user-avatar {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.dropdown a {
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown a:last-child {
+    border-bottom: none;
+}
+
+.dropdown a:hover {
+    background: #f7f7fc;
+}
+
+.user-avatar:hover .dropdown {
+    display: block;
+}
+.dashboard {
+    display: flex;
+    gap: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.dashboard .section {
+    flex: 1;
+}
+
+.account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.account-info h1 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.account-info p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4a98c5;
+}
+/* Tổng thể */
+.container-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px; /* Khoảng cách giữa hai ô */
+    margin: 50px auto;
+    max-width: 900px;
+}
+
+.container {
+    max-width: 400px;
+    flex: 1;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+}
+
+.title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: rgb(25, 151, 209);;
+}
+#remainingDebt {
+    font-size: 35px; /* Increase font size */
+    font-weight: bold; /* Make text bold */
+    color: rgb(15, 90, 124);;
+}
+#monthlyDue {
+    font-size: 20px; /* Increase font size */
+    font-weight: bold; /* Make text bold */
+    color: rgb(15, 90, 124);;
+}
+.slider-container {
+    margin-bottom: 20px;
+}
+
+.slider-container label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.slider-container input {
+    width: 100%;
+}
+
+.info {
+    margin-bottom: 10px;
+}
+
+.info span {
+    font-weight: bold;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    background: rgb(25, 151, 209);
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn-full-payment {
+    margin-top: 10px;
+    background: rgb(25, 151, 209);
+}
+
+.btn-full-payment:hover {
+    background: rgb(10, 95, 134);
+}
+
+.btn:hover {
+    background: rgb(10, 95, 134);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container-wrapper {
+        flex-direction: column; /* Xếp chồng dọc khi màn hình nhỏ */
+    }
+
+    .container {
+        max-width: 100%; /* Chiếm toàn bộ chiều rộng */
+    }
+}

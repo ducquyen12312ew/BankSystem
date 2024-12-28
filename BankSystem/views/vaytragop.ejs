@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="vaytragop.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  </head>
+  <body>
+    <header class="menu">
+        <div class="menu-logo">
+            <img src="image/logo_icon.png" alt="Website Logo">
+        </div>
+        <nav>
+            <ul class="horizontal-menu">
+              <li><a href="/home">
+                <i class="fa-solid fa-wallet" style="color: #ffffff;"></i>
+                &nbsp
+                  Tài Khoản
+              </a></li>
+              <li><a href="/saving">
+                <i class="fa-solid fa-piggy-bank" style="color: #ffffff;"></i>
+                &nbsp
+                  Sổ Tiết Kiệm
+              </a></li>
+              <li><a href="/card">
+                <i class="fa-solid fa-credit-card" style="color: #ffffff;"></i>
+                  &nbsp
+                  Thẻ Ngân Hàng  
+              </a></li>
+              <li><a href="/vay">
+                <i class="fa-solid fa-money-bill" style="color: #ffffff;"></i>
+                &nbsp
+                  Vay
+              </a></li>
+              <li><a href="/thongbao">
+                <i class="fa-solid fa-clock-rotate-left" style="color: #ffffff;"></i>
+                &nbsp
+                  Lịch Sử Giao Dịch
+              </a></li>
+              <li><a href="#">
+                <i class="fa-solid fa-gear" style="color: #ffffff;"></i>
+              </a></li>
+            </ul>
+          </nav>
+        <div class="user-avatar">
+          <i class="fa-solid fa-user-tie" style="color: #ffffff;"></i>
+            <div class="dropdown">
+                <a href="#">Profile</a>
+                <a href="#">Logout</a>
+            </div>
+        </div>
+    </header>
+        
+    <div class="container-wrapper">
+      <!-- Vay Nhanh -->
+      <div class="container">
+        <div class="title">Vay Trả Góp</div>
+        <div class="slider-container">
+          <label for="amount">Bạn muốn vay:</label>
+          <input type="range" id="amount" min="1000000" max="20000000" step="1000000" value="6000000">
+          <div>Số tiền vay: <span id="amountDisplay">6,000,000</span>đ</div>
+      </div>
+      
+      <div class="slider-container">
+          <label for="term">Thời hạn (tháng):</label>
+          <input type="range" id="term" min="1" max="12" step="1" value="6">
+          <div>Thời hạn: <span id="termDisplay">6</span> tháng</div>
+      </div>
+      
+        <div class="info">Trả mỗi tháng: <span id="monthlyPayment">1,247,000</span></div>
+        <div class="info">Tổng thanh toán tạm tính: <span id="totalPayment">7,482,000</span></div>
+        <button class="btn" id="createLoan">Tạo khoản vay</button>
+      </div>
+    
+      <!-- Thanh toán khoản vay -->
+      <div class="container">
+        <div class="title">Thanh toán khoản vay</div>
+        <div class="info">Số tiền còn lại cần thanh toán:</div>
+        <span id="remainingDebt">0</span>
+        <div class="info"></div>
+        <div class="info">Số tiền cần trả mỗi kỳ: <span id="monthlyDue">0</span></div>
+        <button class="btn" id="payInstallment">Trả kỳ này</button>
+        <button class="btn btn-full-payment" id="payFullDebt">Trả hết</button>
+      </div>
+    </div>
+    
+    
+    
+    
+    
+</body>
+<script>
+  // Lấy các phần tử HTML
+const amountSlider = document.getElementById('amount');
+const termSlider = document.getElementById('term');
+const amountDisplay = document.getElementById('amountDisplay');
+const termDisplay = document.getElementById('termDisplay');
+const monthlyPaymentDisplay = document.getElementById('monthlyPayment');
+const totalPaymentDisplay = document.getElementById('totalPayment');
+const remainingDebtDisplay = document.getElementById('remainingDebt');
+const monthlyDueDisplay = document.getElementById('monthlyDue');
+const payInstallmentButton = document.getElementById('payInstallment');
+const payFullDebtButton = document.getElementById('payFullDebt');
+
+let remainingDebt = 0; // Số tiền còn lại cần thanh toán
+let monthlyDue = 0; // Số tiền cần trả mỗi kỳ
+
+const interestRate = 12; // Lãi suất hàng năm (12%)
+
+// Hàm định dạng tiền tệ
+function formatCurrency(value) {
+  return value.toLocaleString('vi-VN') + 'đ';
+}
+
+// Hàm tính toán khoản trả hàng tháng
+function calculateMonthlyPayment(amount, months) {
+  const monthlyRate = (interestRate / 100) / 12;
+  return (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
+}
+
+// Hàm cập nhật giá trị khi kéo thanh trượt
+function updateValues() {
+  const amount = parseInt(amountSlider.value); // Lấy giá trị từ thanh trượt số tiền
+  const term = parseInt(termSlider.value); // Lấy giá trị từ thanh trượt thời hạn
+
+  // Cập nhật giá trị hiển thị
+  amountDisplay.textContent = formatCurrency(amount);
+  termDisplay.textContent = term;
+
+  // Tính toán khoản trả hàng tháng và tổng số tiền phải trả
+  const monthlyPayment = calculateMonthlyPayment(amount, term);
+  const totalPayment = monthlyPayment * term;
+
+  // Hiển thị kết quả tính toán
+  monthlyPaymentDisplay.textContent = formatCurrency(Math.round(monthlyPayment));
+  totalPaymentDisplay.textContent = formatCurrency(Math.round(totalPayment));
+}
+
+// Hàm cập nhật thông tin thanh toán
+function updatePaymentInfo() {
+  remainingDebtDisplay.textContent = formatCurrency(remainingDebt);
+  monthlyDueDisplay.textContent = formatCurrency(monthlyDue);
+}
+
+// Gắn sự kiện 'input' vào thanh trượt
+amountSlider.addEventListener('input', updateValues);
+termSlider.addEventListener('input', updateValues);
+
+// Gắn sự kiện tạo khoản vay
+document.getElementById('createLoan').addEventListener('click', async () => {
+  const amount = parseInt(amountSlider.value);
+  const term = parseInt(termSlider.value);
+
+  if (remainingDebt > 0) {
+    alert('Bạn phải thanh toán hết khoản vay hiện tại trước khi tạo khoản vay mới.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/create-loan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, term }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      remainingDebt = result.totalPayment;
+      monthlyDue = result.monthlyPayment;
+      updatePaymentInfo();
+      alert('Khoản vay đã được tạo thành công!');
+    } else {
+      alert(`Lỗi: ${result.message}`);
+    }
+  } catch (error) {
+    alert('Có lỗi xảy ra, vui lòng thử lại.');
+    console.error(error);
+  }
+});
+
+// Gắn sự kiện thanh toán từng kỳ
+payInstallmentButton.addEventListener('click', async () => {
+  if (remainingDebt <= 0) {
+    alert('Bạn không có khoản vay nào cần thanh toán.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/pay-loan-installment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: monthlyDue }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      remainingDebt -= monthlyDue;
+      updatePaymentInfo();
+
+      if (remainingDebt <= 0) {
+        alert('Bạn đã thanh toán xong khoản vay!');
+      } else {
+        alert('Kỳ này đã được thanh toán!');
+      }
+    } else {
+      alert(`Lỗi: ${result.message}`);
+    }
+  } catch (error) {
+    alert('Có lỗi xảy ra, vui lòng thử lại.');
+    console.error(error);
+  }
+});
+
+// Gắn sự kiện thanh toán toàn bộ khoản vay
+payFullDebtButton.addEventListener('click', async () => {
+  if (remainingDebt <= 0) {
+      alert('Bạn không có khoản vay nào cần thanh toán.');
+      return;
+  }
+
+  try {
+      const response = await fetch('/pay-full-loan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: remainingDebt }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+          remainingDebt = 0;
+          monthlyDue = 0;
+          updatePaymentInfo();
+          alert('Bạn đã thanh toán toàn bộ khoản vay!');
+      } else {
+          alert(`Lỗi: ${result.message}`);
+      }
+  } catch (error) {
+      alert('Có lỗi xảy ra, vui lòng thử lại.');
+      console.error(error);
+  }
+});
+async function fetchLoanInfo() {
+  try {
+      const response = await fetch('/loan-info');
+      const result = await response.json();
+
+      if (response.ok) {
+          remainingDebt = result.remainingDebt;
+          monthlyDue = result.monthlyDue;
+          updatePaymentInfo();
+      } else {
+          console.error('Lỗi khi tải thông tin khoản vay:', result.message);
+      }
+  } catch (error) {
+      console.error('Có lỗi xảy ra khi tải thông tin khoản vay:', error);
+  }
+}
+
+// Gọi hàm fetchLoanInfo khi tải trang
+fetchLoanInfo();
+
+// Cập nhật giá trị ban đầu
+updateValues();
+updatePaymentInfo();
+
+
+</script>
+
+</html>

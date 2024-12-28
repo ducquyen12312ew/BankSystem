@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="vaythechap.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  </head>
+  <body>
+    <header class="menu">
+        <div class="menu-logo">
+            <img src="image/logo_icon.png" alt="Website Logo">
+        </div>
+        <nav>
+            <ul class="horizontal-menu">
+              <li><a href="/home">
+                <i class="fa-solid fa-wallet" style="color: #ffffff;"></i>
+                &nbsp
+                  Tài Khoản
+              </a></li>
+              <li><a href="/saving">
+                <i class="fa-solid fa-piggy-bank" style="color: #ffffff;"></i>
+                &nbsp
+                  Sổ Tiết Kiệm
+              </a></li>
+              <li><a href="/card">
+                <i class="fa-solid fa-credit-card" style="color: #ffffff;"></i>
+                  &nbsp
+                  Thẻ Ngân Hàng  
+              </a></li>
+              <li><a href="/vay">
+                <i class="fa-solid fa-money-bill" style="color: #ffffff;"></i>
+                &nbsp
+                  Vay
+              </a></li>
+              <li><a href="/thongbao">
+                <i class="fa-solid fa-clock-rotate-left" style="color: #ffffff;"></i>
+                &nbsp
+                  Lịch Sử Giao Dịch
+              </a></li>
+              <li><a href="#">
+                <i class="fa-solid fa-gear" style="color: #ffffff;"></i>
+              </a></li>
+            </ul>
+          </nav>
+        <div class="user-avatar">
+          <i class="fa-solid fa-user-tie" style="color: #ffffff;"></i>
+            <div class="dropdown">
+                <a href="#">Profile</a>
+                <a href="#">Logout</a>
+            </div>
+        </div>
+    </header>
+        
+    <div class="container-wrapper">
+      <!-- Chọn Tài Sản -->
+      <div class="container">
+        <div class="title">Thế Chấp Tài Sản</div>
+  
+        <!-- Chọn loại tài sản -->
+        <div class="form-group">
+          <label for="assetType">Loại tài sản:</label>
+          <select id="assetType">
+            <option value="" disabled selected>Chọn loại tài sản</option>
+            <option value="1000000">Giấy tờ</option>
+            <option value="3000000000">Bất động sản</option>
+            <option value="500000000">Xe cộ</option>
+          </select>
+        </div>
+  
+        <!-- Upload hình ảnh -->
+        <div class="form-group">
+          <label for="assetImage">Hình ảnh tài sản:</label>
+          <input type="file" id="assetImage" accept="image/*" required>
+        </div>
+  
+        <!-- Hiển thị số tiền thế chấp -->
+        <div class="info">Số tiền thế chấp: <span id="loanAmount">0</span>đ</div>
+  
+        <!-- Nút thế chấp -->
+        <button class="btn" id="mortgageAsset">Thế chấp</button>
+      </div>
+  
+      <!-- Thanh toán khoản vay -->
+      <div class="container">
+        <div class="title">Thanh toán khoản vay</div>
+        <div class="info">Số tiền còn lại cần thanh toán: <span id="remainingDebt">0</span>đ</div>
+        <div class="info">Số tiền cần trả mỗi kỳ: <span id="monthlyDue">0</span>đ</div>
+        <button class="btn" id="payInstallment">Trả kỳ này</button>
+        <button class="btn btn-full-payment" id="payFullDebt">Trả hết</button>
+      </div>
+    </div>
+    
+    
+    
+    
+    
+</body>
+<script>
+  // Lấy các phần tử HTML
+  const assetType = document.getElementById('assetType');
+  const assetImage = document.getElementById('assetImage');
+  const loanAmountDisplay = document.getElementById('loanAmount');
+  const mortgageAssetButton = document.getElementById('mortgageAsset');
+  const remainingDebtDisplay = document.getElementById('remainingDebt');
+  const monthlyDueDisplay = document.getElementById('monthlyDue');
+  const payInstallmentButton = document.getElementById('payInstallment');
+  const payFullDebtButton = document.getElementById('payFullDebt');
+  
+  let remainingDebt = 0;
+  let monthlyDue = 0;
+  
+  function formatCurrency(value) {
+    return value.toLocaleString('vi-VN') + 'đ';
+  }
+  
+  // Xử lý chọn loại tài sản
+  assetType.addEventListener('change', () => {
+    const loanAmount = parseInt(assetType.value || 0);
+    loanAmountDisplay.textContent = formatCurrency(loanAmount);
+  });
+  
+  // Xử lý thế chấp tài sản
+  mortgageAssetButton.addEventListener('click', async () => {
+    const loanAmount = parseInt(assetType.value || 0);
+    const file = assetImage.files[0];
+  
+    if (!loanAmount || !file) {
+      alert('Vui lòng chọn loại tài sản và tải lên hình ảnh.');
+      return;
+    }
+  
+    // Thêm mã xử lý upload file nếu cần thiết
+  
+    remainingDebt = loanAmount;
+    monthlyDue = Math.round(loanAmount / 12); // Cố định trả trong 12 tháng
+    updatePaymentInfo();
+  
+    alert(`Tài sản đã thế chấp! Số tiền được thêm vào khoản vay: ${formatCurrency(loanAmount)}.`);
+  });
+  
+  function updatePaymentInfo() {
+    remainingDebtDisplay.textContent = formatCurrency(remainingDebt);
+    monthlyDueDisplay.textContent = formatCurrency(monthlyDue);
+  }
+  
+  // Xử lý trả từng kỳ
+  payInstallmentButton.addEventListener('click', () => {
+    if (remainingDebt <= 0) {
+      alert('Bạn không có khoản vay nào cần thanh toán.');
+      return;
+    }
+  
+    if (remainingDebt < monthlyDue) {
+      remainingDebt = 0;
+    } else {
+      remainingDebt -= monthlyDue;
+    }
+  
+    updatePaymentInfo();
+    alert('Bạn đã thanh toán kỳ này!');
+  });
+  
+  // Xử lý trả hết khoản vay
+  payFullDebtButton.addEventListener('click', () => {
+    if (remainingDebt <= 0) {
+      alert('Bạn không có khoản vay nào cần thanh toán.');
+      return;
+    }
+  
+    remainingDebt = 0;
+    updatePaymentInfo();
+    alert('Bạn đã thanh toán toàn bộ khoản vay!');
+  });
+  
+
+
+</script>
+
+</html>

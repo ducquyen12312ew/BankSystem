@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RutTien</title>
+    <link rel="stylesheet" href="ruttien.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  </head>
+  <body>
+    <header class="menu">
+        <div class="menu-logo">
+            <img src="image/logo_icon.png" alt="Website Logo">
+        </div>
+        <nav>
+            <ul class="horizontal-menu">
+              <li><a href="/home">
+                <i class="fa-solid fa-wallet" style="color: #ffffff;"></i>
+                &nbsp
+                  Tài Khoản
+              </a></li>
+              <li><a href="/saving">
+                <i class="fa-solid fa-piggy-bank" style="color: #ffffff;"></i>
+                &nbsp
+                  Sổ Tiết Kiệm
+              </a></li>
+              <li><a href="/card">
+                <i class="fa-solid fa-credit-card" style="color: #ffffff;"></i>
+                  &nbsp
+                  Thẻ Ngân Hàng  
+              </a></li>
+              <li><a href="/vay">
+                <i class="fa-solid fa-money-bill" style="color: #ffffff;"></i>
+                &nbsp
+                  Vay
+              </a></li>
+              <li><a href="/thongbao">
+                <i class="fa-solid fa-clock-rotate-left" style="color: #ffffff;"></i>
+                &nbsp
+                  Lịch Sử Giao Dịch
+              </a></li>
+              <li><a href="#">
+                <i class="fa-solid fa-gear" style="color: #ffffff;"></i>
+              </a></li>
+            </ul>
+          </nav>
+        <div class="user-avatar">
+          <i class="fa-solid fa-user-tie" style="color: #ffffff;"></i>
+            <div class="dropdown">
+                <a href="#">Profile</a>
+                <a href="#">Logout</a>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+      <div class="header">
+        <img src="image/wall.png" alt="Wallet Icon" class="icon">
+        <h1>RÚT TIỀN</h1>
+      </div>
+      <div class="amount-container">
+        <h2>SỐ TIỀN RÚT:</h2>
+        <input type="text" id="totalAmount" readonly value="0 VND">
+      </div>
+      <div class="denominations">
+        <button class="amount-btn" data-value="50000">50,000 VND</button>
+        <button class="amount-btn" data-value="100000">100,000 VND</button>
+        <button class="amount-btn" data-value="200000">200,000 VND</button>
+        <button class="amount-btn" data-value="500000">500,000 VND</button>
+        <button class="amount-btn" data-value="1000000">1,000,000 VND</button>
+        <button class="amount-btn" data-value="2000000">2,000,000 VND</button>
+        <button class="amount-btn" data-value="5000000">5,000,000 VND</button>
+        <button class="amount-btn" data-value="10000000">10,000,000 VND</button>
+      </div>
+      <button id="resetAmount">Đặt lại</button>
+      <button id="payAmount">Rút tiền</button>
+      <div class="method-container">
+        <h2>Chọn ngân hàng liên kết:</h2>
+        <select id="paymentMethod">
+          <option value="" disabled selected>Chọn ngân hàng</option>
+          <option value="bank">Techcombank 19036406475021</option>
+          <option value="momo">MoMo</option>
+          <option value="zalopay">ZaloPay 0982495562</option>
+        </select>
+      </div>
+    </div>
+</body>
+<script>
+  const userAvatar = document.querySelector('.user-avatar');
+  const dropdown = document.querySelector('.dropdown');
+    document.addEventListener('DOMContentLoaded', () => {
+      const buttons = document.querySelectorAll('.amount-btn');
+      const totalAmount = document.getElementById('totalAmount');
+      const resetButton = document.getElementById('resetAmount');
+      const payButton = document.getElementById('payAmount');
+  
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          const value = parseInt(button.getAttribute('data-value'), 10);
+          if (isNaN(value)) {
+            console.error('Invalid data-value attribute for button:', button);
+            return;
+          }
+  
+          const currentAmount = parseInt(totalAmount.value.replace(/\D/g, ''), 10) || 0;
+          const newAmount = currentAmount + value;
+          totalAmount.value = newAmount.toLocaleString('vi-VN') + ' VND';
+          console.log('Updated total amount:', totalAmount.value);
+        });
+      });
+  
+      resetButton.addEventListener('click', () => {
+        totalAmount.value = '0 VND';
+        console.log('Total amount reset to 0 VND');
+      });
+  
+      payButton.addEventListener('click', () => {
+        const amount = parseInt(totalAmount.value.replace(/\D/g, ''), 10) || 0;
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        if (!paymentMethod) {
+          alert("Vui lòng chọn một ngân hàng trước khi rút tiền.");
+          return;
+      }
+        if (amount <= 0) {
+            alert("Số tiền rút phải lớn hơn 0.");
+            return;
+        }
+    
+        // Gọi API `/withdraw-amount` để xử lý rút tiền
+        fetch('/withdraw-amount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+              const totalAmount = document.getElementById('totalAmount').value; // Assuming totalAmount is an input field
+              alert('Đã rút ' + totalAmount + ' từ tài khoản');
+              document.getElementById('totalAmount').value = '0 VND'; // Reset số tiền
+          } else {
+              alert('Rút tiền thất bại: ' + data.message);
+          }
+      })
+        .catch(error => {
+            console.error('Error withdrawing amount:', error);
+            alert('Đã xảy ra lỗi khi rút tiền. Vui lòng thử lại sau.');
+        });
+    });
+  });
+    
+  </script>
+
+  
+</script>
+
+</html>

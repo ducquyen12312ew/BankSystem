@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="home.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  </head>
+  <body>
+    <header class="menu">
+        <div class="menu-logo">
+            <img src="image/logo_icon.png" alt="Website Logo">
+        </div>
+        <nav>
+            <ul class="horizontal-menu">
+              <li><a href="/home">
+                <i class="fa-solid fa-wallet" style="color: #ffffff;"></i>
+                &nbsp
+                  Tài Khoản
+              </a></li>
+              <li><a href="/saving">
+                <i class="fa-solid fa-piggy-bank" style="color: #ffffff;"></i>
+                &nbsp
+                  Sổ Tiết Kiệm
+              </a></li>
+              <li><a href="/card">
+                <i class="fa-solid fa-credit-card" style="color: #ffffff;"></i>
+                  &nbsp
+                  Thẻ Ngân Hàng  
+              </a></li>
+              <li><a href="/vay">
+                <i class="fa-solid fa-money-bill" style="color: #ffffff;"></i>
+                &nbsp
+                  Vay
+              </a></li>
+              <li><a href="/thongbao">
+                <i class="fa-solid fa-clock-rotate-left" style="color: #ffffff;"></i>
+                &nbsp
+                  Lịch Sử Giao Dịch
+              </a></li>
+              <li><a href="#">
+                <i class="fa-solid fa-gear" style="color: #ffffff;"></i>
+              </a></li>
+            </ul>
+          </nav>
+        <div class="user-avatar">
+          <i class="fa-solid fa-user-tie" style="color: #ffffff;"></i>
+            <div class="dropdown">
+                <a href="#">Profile</a>
+                <a href="#">Logout</a>
+            </div>
+        </div>
+    </header>
+    <div class="dashboard">
+      <!-- Promo Section -->
+    
+  <div class="dashboard">
+    <div>
+      <h2 class="hover-effect" onclick="window.location.href='/vaytragop'">Vay Trả Góp</i></h2>
+      <div class="section image-section3" onclick="window.location.href='/vaytragop'"></div>
+  </div>
+<!-- Cách 2 ô -->
+<div></div><div></div><div></div><div></div><div></div>
+
+    <div>
+      <h2 class="hover-effect" onclick="window.location.href='/vaythechap'">Vay Thế Chấp</i></h2>
+      <div class="section image-section4" onclick="window.location.href='/vaythechap'"></div>
+  </div>
+  
+
+</div>
+<div style="margin-bottom: 100px;"></div>
+</body>
+<script>
+  const userAvatar = document.querySelector('.user-avatar');
+  const dropdown = document.querySelector('.dropdown');
+
+  userAvatar.addEventListener('mouseenter', () => {
+      dropdown.style.display = 'block';
+  });
+
+  userAvatar.addEventListener('mouseleave', () => {
+      setTimeout(() => {
+          dropdown.style.display = 'none';
+      }, 5000); 
+  });
+
+  dropdown.addEventListener('mouseenter', () => {
+      dropdown.style.display = 'block';
+  });
+
+  dropdown.addEventListener('mouseleave', () => {
+      dropdown.style.display = 'none';
+  });
+  document.getElementById("toggle-visibility").addEventListener("click", function () {
+    const amountElement = document.getElementById("amount");
+    const eyeIcon = this.querySelector("i");
+    const isHidden = amountElement.textContent.includes("*");
+  
+    if (isHidden) {
+      amountElement.textContent = "<%= data.amount.toLocaleString() %>đ";
+      eyeIcon.classList.remove("fa-eye-slash");
+      eyeIcon.classList.add("fa-eye");
+    } else {
+      amountElement.textContent = "**********"; 
+      eyeIcon.classList.remove("fa-eye");
+      eyeIcon.classList.add("fa-eye-slash");
+    }
+  });
+  
+</script>
+
+</html>

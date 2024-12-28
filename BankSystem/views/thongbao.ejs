@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="thongbao.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  </head>
+  <body>
+    <header class="menu">
+        <div class="menu-logo">
+            <img src="image/logo_icon.png" alt="Website Logo">
+        </div>
+        <nav>
+            <ul class="horizontal-menu">
+              <li><a href="/home">
+                <i class="fa-solid fa-wallet" style="color: #ffffff;"></i>
+                &nbsp
+                  Tài Khoản
+              </a></li>
+              <li><a href="/saving">
+                <i class="fa-solid fa-piggy-bank" style="color: #ffffff;"></i>
+                &nbsp
+                  Sổ Tiết Kiệm
+              </a></li>
+              <li><a href="/card">
+                <i class="fa-solid fa-credit-card" style="color: #ffffff;"></i>
+                  &nbsp
+                  Thẻ Ngân Hàng  
+              </a></li>
+              <li><a href="/vay">
+                <i class="fa-solid fa-money-bill" style="color: #ffffff;"></i>
+                &nbsp
+                  Vay
+              </a></li>
+              <li><a href="/thongbao">
+                <i class="fa-solid fa-clock-rotate-left" style="color: #ffffff;"></i>
+                &nbsp
+                  Lịch Sử Giao Dịch
+              </a></li>
+              <li><a href="#">
+                <i class="fa-solid fa-gear" style="color: #ffffff;"></i>
+              </a></li>
+            </ul>
+          </nav>
+        <div class="user-avatar">
+          <i class="fa-solid fa-user-tie" style="color: #ffffff;"></i>
+            <div class="dropdown">
+                <a href="#">Profile</a>
+                <a href="#">Logout</a>
+            </div>
+        </div>
+    </header>
+        
+    <div class="notification-container">
+      <% transactions.forEach((transaction, index) => { %>
+        <div class="transaction-box <%= index % 2 === 0 ? 'white-box' : 'blue-box' %>" data-transaction='<%= JSON.stringify(transaction) %>'>
+            <div class="icon">
+                <% if (transaction.transactionType === 'deposit') { %>
+                    <i class="fa-solid fa-hand-holding-dollar" style="color: green;"></i>
+                <% } else if (transaction.transactionType === 'purchase') { %>
+                    <i class="fa-solid fa-cart-shopping" style="color: blue;"></i>
+                <% } else { %>
+                    <i class="fa-solid fa-money-bill" style="color: red;"></i>
+                <% } %>
+            </div>
+            <div class="details">
+                <div class="transaction-type">
+                    <strong>
+                        <%= transaction.transactionType === 'deposit' ? 'Nạp tiền' :
+                            transaction.transactionType === 'purchase' ? 'Mua hàng' : 'Rút tiền' %>
+                    </strong>
+                </div>
+                <div class="transaction-info">
+                    Mã giao dịch: <%= transaction.transactionId %><br>
+                    Ngày: <%= new Date(transaction.transactionDate).toLocaleString() %><br>
+                    Số tiền: <span class="transaction-amount"><%= transaction.amount.toLocaleString() %>đ</span><br>
+                    <%= transaction.description ? `Mô tả: ${transaction.description}` : '' %>
+                </div>
+            </div>
+        </div>
+        <% }); %>
+        
+        
+  </div>
+  
+  <!-- Popup Modal -->
+  <div id="transactionModal" class="modal">
+      <div class="modal-content">
+          <span class="close">&times;</span>
+          <div class="modal-details">
+              <p>Mã giao dịch: <span id="modalTransactionId"></span></p>
+              <p>Ngày: <span id="modalTransactionDate"></span></p>
+              <p>Số tiền: <span id="modalTransactionAmount"></span></p>
+          </div>
+      </div>
+  </div>
+    
+    
+    
+    
+</body>
+<script>
+  // Lấy các phần tử HTML
+
+const transactionBoxes = document.querySelectorAll('.transaction-box');
+const modal = document.getElementById('transactionModal');
+const span = document.getElementsByClassName('close')[0];
+
+document.addEventListener('DOMContentLoaded', () => {
+  const transactionBoxes = document.querySelectorAll('.transaction-box');
+  const modal = document.getElementById('transactionModal');
+  const span = document.getElementsByClassName('close')[0];
+
+  transactionBoxes.forEach(box => {
+      box.addEventListener('click', () => {
+          const transaction = JSON.parse(box.getAttribute('data-transaction'));
+          document.getElementById('modalTransactionId').textContent = transaction.transactionId;
+          document.getElementById('modalTransactionDate').textContent = new Date(transaction.transactionDate).toLocaleString();
+          document.getElementById('modalTransactionAmount').textContent = transaction.amount.toLocaleString() + 'đ';
+          modal.style.display = 'block';
+      });
+  });
+
+  span.onclick = function() {
+      modal.style.display = 'none';
+  }
+
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = 'none';
+      }
+  }});
+// Gọi hàm fetchLoanInfo khi tải trang
+fetchLoanInfo();
+
+// Cập nhật giá trị ban đầu
+updateValues();
+updatePaymentInfo();
+
+
+</script>
+
+</html>
