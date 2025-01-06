@@ -1,0 +1,204 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f7f7fc;
+}
+
+.menu {
+    background: linear-gradient(135deg, #84b9e0, #6ab1eb);
+    padding: 10px 15px; 
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.menu-logo {
+    display: flex;
+    align-items: center;
+}
+
+.menu-logo img {
+    width: 160px;
+    height: 50px;
+    margin-right: 10px;
+}
+.horizontal-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.horizontal-menu li {
+    display: flex;
+    align-items: center;
+    margin: 0 15px;
+}
+
+.horizontal-menu li a {
+    text-decoration: none;
+    font-size: 16px;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.horizontal-menu li a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.horizontal-menu li a svg {
+    margin-right: 8px;
+}
+.user-avatar {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.dropdown a {
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown a:last-child {
+    border-bottom: none;
+}
+
+.dropdown a:hover {
+    background: #f7f7fc;
+}
+
+.user-avatar:hover .dropdown {
+    display: block;
+}
+.chat-container {
+  display: flex;
+  height: 100vh;
+}
+
+.user-list {
+  width: 25%;
+  background-color: #f5f5f5;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.user-list h3 {
+  margin: 0 0 10px;
+}
+
+.user-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-list li {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.user-list li:hover {
+  background-color: #ddd;
+}
+
+.chat-box {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  padding: 20px;
+  background-color: #0078d7;
+  color: white;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Tin nhắn của admin */
+.message.sent {
+  align-self: flex-end; /* Đưa tin nhắn admin sang phải */
+  background-color: #0078d7;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 15px 15px 0 15px; /* Bo góc */
+  max-width: 60%;
+  word-wrap: break-word;
+}
+
+/* Tin nhắn của người dùng */
+.message.received {
+  align-self: flex-start; /* Đưa tin nhắn người dùng sang trái */
+  background-color: #e5e5e5;
+  color: black;
+  padding: 10px 15px;
+  border-radius: 15px 15px 15px 0; /* Bo góc */
+  max-width: 60%;
+  word-wrap: break-word;
+}
+
+/* Giao diện khung chat */
+.chat-input {
+  display: flex;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.chat-input button {
+  padding: 10px 20px;
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.unread-indicator {
+  color: green;
+  font-size: 1.5em;
+  margin-left: 10px;
+}

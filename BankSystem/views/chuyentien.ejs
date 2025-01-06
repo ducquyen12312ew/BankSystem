@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chuyển Tiền</title>
+  <link rel="stylesheet" href="chuyentien.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header class="menu">
+    <div class="menu-logo">
+      <img src="image/logo_icon.png" alt="Website Logo">
+    </div>
+    <nav>
+      <ul class="horizontal-menu">
+        <li><a href="/home"><i class="fa-solid fa-wallet"></i> Tài Khoản</a></li>
+        <li><a href="/saving"><i class="fa-solid fa-piggy-bank"></i> Sổ Tiết Kiệm</a></li>
+        <li><a href="/card"><i class="fa-solid fa-credit-card"></i> Thẻ Ngân Hàng</a></li>
+        <li><a href="/vay"><i class="fa-solid fa-money-bill"></i> Vay</a></li>
+        <li><a href="/thongbao"><i class="fa-solid fa-clock-rotate-left"></i> Lịch Sử Giao Dịch</a></li>
+        <li><a href="#"><i class="fa-solid fa-gear"></i></a></li>
+      </ul>
+    </nav>
+    <div class="user-avatar">
+      <i class="fa-solid fa-user-tie"></i>
+      <div class="dropdown">
+        <a href="#">Profile</a>
+        <a href="#">Logout</a>
+      </div>
+    </div>
+  </header>
+  
+  <div class="container">
+    <h2>Chuyển Tiền</h2>
+    <div class="amount-container">
+      <label for="totalAmount">Số tiền:</label>
+      <input type="text" id="totalAmount" value="0 VND" />
+    </div>
+
+    <div class="denominations">
+      <button class="amount-btn" data-value="50000">50,000 VND</button>
+      <button class="amount-btn" data-value="100000">100,000 VND</button>
+      <button class="amount-btn" data-value="200000">200,000 VND</button>
+      <button class="amount-btn" data-value="500000">500,000 VND</button>
+      <button class="amount-btn" data-value="1000000">1,000,000 VND</button>
+      <button class="amount-btn" data-value="2000000">2,000,000 VND</button>
+      <button class="amount-btn" data-value="5000000">5,000,000 VND</button>
+      <button class="amount-btn" data-value="10000000">10,000,000 VND</button>
+    </div>
+
+    <div class="container">
+      <div class="title">Chọn Ngân Hàng</div>
+      
+      <div class="bank-options">
+        <div class="bank-btn" data-bank="Techcombank">
+          <i class="fa-solid fa-university" style="color: #FF4500;"></i> Techcombank
+        </div>
+        <div class="bank-btn" data-bank="MBBank">
+          <i class="fa-solid fa-building-columns" style="color: #0074D9;"></i> MBBank
+        </div>
+        <div class="bank-btn" data-bank="Vietcombank">
+          <i class="fa-solid fa-piggy-bank" style="color: #228B22;"></i> Vietcombank
+        </div>
+        <div class="bank-btn" data-bank="BIDV">
+          <i class="fa-solid fa-money-check" style="color: #1E90FF;"></i> BIDV
+        </div>
+      </div>
+      
+      <div class="account-input" style="display: none;">
+        <label for="accountNumber">Nhập số tài khoản:</label>
+        <input type="text" id="accountNumber" placeholder="Nhập số tài khoản">
+      </div>
+      
+      <button class="submit-btn">Chuyển Tiền</button>
+    </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const bankButtons = document.querySelectorAll('.bank-btn'); 
+      const accountInput = document.querySelector('.account-input'); 
+      const transferButton = document.querySelector('.submit-btn');
+      const totalAmount = document.getElementById('totalAmount'); 
+      let selectedBank = null; 
+      const amountButtons = document.querySelectorAll('.amount-btn');
+      amountButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const value = parseInt(button.getAttribute('data-value'), 10);
+          if (isNaN(value)) {
+            console.error('Invalid data-value attribute for button:', button);
+            return;
+          }
+          const currentAmount = parseInt(totalAmount.value.replace(/\D/g, ''), 10) || 0;
+          const newAmount = currentAmount + value;
+          totalAmount.value = newAmount.toLocaleString('vi-VN') + ' VND';
+        });
+      });
+      // Xử lý chọn ngân hàng
+      bankButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          selectedBank = button.getAttribute('data-bank'); 
+          accountInput.style.display = 'block'; 
+          bankButtons.forEach(btn => btn.classList.remove('selected')); 
+          button.classList.add('selected'); 
+        });
+      });
+    
+      // Xử lý nút chuyển tiền
+      transferButton.addEventListener('click', () => {
+        const accountNumber = document.getElementById('accountNumber').value.trim();
+        const amount = parseInt(totalAmount.value.replace(/\D/g, ''), 10) || 0;
+    
+        if (!selectedBank) {
+          alert('Vui lòng chọn ngân hàng trước.');
+          return;
+        }
+    
+        if (!accountNumber) {
+          alert('Vui lòng nhập số tài khoản.');
+          return;
+        }
+    
+        if (amount <= 0) {
+          alert('Số tiền chuyển phải lớn hơn 0.');
+          return;
+        }
+    
+        // Gửi yêu cầu tới server
+        fetch('/transfer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            bank: selectedBank,
+            accountNumber,
+            amount,
+            transactionType: 'transfer',
+          }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert(`Đã chuyển ${amount.toLocaleString('vi-VN')} đến tài khoản ${accountNumber} tại ngân hàng ${selectedBank}.`);
+              totalAmount.value = '0 VND'; // Reset số tiền
+              accountInput.style.display = 'none'; // Ẩn ô nhập số tài khoản
+              selectedBank = null; // Reset ngân hàng đã chọn
+              bankButtons.forEach(btn => btn.classList.remove('selected')); // Bỏ highlight các nút
+            } else {
+              alert(`Chuyển tiền thất bại: ${data.message}`);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra. Vui lòng thử lại.');
+          });
+      });
+    });
+    
+  </script>
+</body>
+</html>

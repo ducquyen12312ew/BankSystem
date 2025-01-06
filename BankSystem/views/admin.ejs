@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="admin.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  </head>
+  <body>
+    <header class="menu">
+        <div class="menu-logo">
+            <img src="image/logo_icon.png" alt="Website Logo">
+        </div>
+        <nav>
+            <ul class="horizontal-menu">
+                <li><a href="/admin">
+                  <i class="fa-solid fa-wallet" style="color: #ffffff;"></i>
+                  &nbsp
+                    Trang Chính
+                </a></li>
+                <li><a href="/chat">
+                  <i class="fa-brands fa-rocketchat" style="color: #ffffff;"></i>
+                  &nbsp
+                    Hỗ Trợ Khách Hàng
+                </a></li>
+                <li><a href="/giaodich">
+                  <i class="fa-solid fa-registered" style="color: #ffffff;"></i>
+                    &nbsp
+                    Quản Lý Giao Dịch 
+                </a></li>
+
+            </ul>
+          </nav>
+        <div class="user-avatar">
+          <i class="fa-solid fa-user-tie" style="color: #ffffff;"></i>
+            <div class="dropdown">
+                <a href="/">Logout</a>
+            </div>
+        </div>
+    </header>
+    <div class="full-width">
+      <div class="dashboard">
+          <div>
+            <h2 class="hover-effect" onclick="window.location.href='/chat'">Hỗ Trợ Khách Hàng</h2>
+            <div class="section image-section1" onclick="window.location.href='/chat'"></div>
+        </div>
+        <div></div><div></div><div></div><div></div><div></div>
+          <div>
+            <h2 class="hover-effect" onclick="window.location.href='/giaodich'">Quản Lý Giao Dịch</h2>
+            <div class="section image-section2" onclick="window.location.href='/giaodich'"></div>
+        </div>
+
+      </div>
+    </div>
+<div style="margin-bottom: 100px;"></div>
+
+</body>
+<script>
+  const userAvatar = document.querySelector('.user-avatar');
+  const dropdown = document.querySelector('.dropdown');
+  const sender = "admin";
+  userAvatar.addEventListener('mouseenter', () => {
+      dropdown.style.display = 'block';
+  });
+
+  userAvatar.addEventListener('mouseleave', () => {
+      setTimeout(() => {
+          dropdown.style.display = 'none';
+      }, 5000); 
+  });
+
+  dropdown.addEventListener('mouseenter', () => {
+      dropdown.style.display = 'block';
+  });
+
+  dropdown.addEventListener('mouseleave', () => {
+      dropdown.style.display = 'none';
+  });
+  document.getElementById("toggle-visibility").addEventListener("click", function () {
+    const amountElement = document.getElementById("amount");
+    const eyeIcon = this.querySelector("i");
+    const isHidden = amountElement.textContent.includes("*");
+  
+    if (isHidden) {
+      amountElement.textContent = "<%= data.amount.toLocaleString() %>đ";
+      eyeIcon.classList.remove("fa-eye-slash");
+      eyeIcon.classList.add("fa-eye");
+    } else {
+      amountElement.textContent = "**********"; 
+      eyeIcon.classList.remove("fa-eye");
+      eyeIcon.classList.add("fa-eye-slash");
+    }
+  });
+
+  // Gửi tin nhắn
+  let receiver = null;
+
+  // Hàm chọn người dùng
+  const selectUser = (userName) => {
+    receiver = userName; // Gán tên người dùng được chọn
+    document.getElementById("chat-container").style.display = "block"; // Hiển thị box chat
+    document.getElementById("chat-receiver-name").textContent = receiver; // Cập nhật tên người nhận
+    fetchMessages(); // Tải tin nhắn của user được chọn
+  };
+
+  // Gửi tin nhắn
+  document.getElementById("send-button").addEventListener("click", async () => {
+    const messageInput = document.getElementById("chat-input");
+    const message = messageInput.value.trim();
+
+    if (!message || !receiver) return alert("Vui lòng chọn người dùng và nhập tin nhắn!");
+
+    try {
+      // Gửi tin nhắn tới server
+      await fetch("/send-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sender: "admin", receiver, message }),
+      });
+
+      // Thêm tin nhắn của admin vào khung chat ngay lập tức
+      const messagesDiv = document.getElementById("messages");
+      const div = document.createElement("div");
+      div.textContent = `admin: ${message}`;
+      div.style.color = "blue"; // Đặt màu sắc đặc biệt cho admin (tuỳ chọn)
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight; // Cuộn xuống cuối khung chat
+
+      // Xóa nội dung ô nhập
+      messageInput.value = "";
+
+    } catch (error) {
+      console.error("Lỗi gửi tin nhắn:", error);
+    }
+  });
+
+  // Tải tin nhắn
+  const fetchMessages = async () => {
+    if (!receiver) return;
+
+    try {
+      const response = await fetch(`/get-messages?sender=admin&receiver=${receiver}`);
+      const data = await response.json();
+      const messagesDiv = document.getElementById("messages");
+      messagesDiv.innerHTML = ""; // Xóa nội dung cũ trước khi hiển thị mới
+
+      if (data.success) {
+        data.messages.forEach(msg => {
+          const div = document.createElement("div");
+          div.textContent = `${msg.sender}: ${msg.message}`;
+          if (msg.sender === "admin") {
+            div.style.color = "blue"; // Tô màu tin nhắn admin
+          }
+          messagesDiv.appendChild(div);
+        });
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Cuộn xuống cuối khung chat
+      }
+    } catch (error) {
+      console.error("Lỗi tải tin nhắn:", error);
+    }
+  };
+
+  setInterval(fetchMessages, 1000); // Tải tin nhắn mỗi giây
+
+
+</script>
+
+
+</html>

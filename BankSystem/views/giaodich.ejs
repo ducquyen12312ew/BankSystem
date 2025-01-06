@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="giaodich.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  </head>
+  <body>
+    <header class="menu">
+      <div class="menu-logo">
+          <img src="image/logo_icon.png" alt="Website Logo">
+      </div>
+      <nav>
+        <ul class="horizontal-menu">
+          <li><a href="/admin">
+            <i class="fa-solid fa-wallet" style="color: #ffffff;"></i>
+            &nbsp
+              Trang Chính
+          </a></li>
+          <li><a href="/chat">
+            <i class="fa-brands fa-rocketchat" style="color: #ffffff;"></i>
+            &nbsp
+              Hỗ Trợ Khách Hàng
+          </a></li>
+          <li><a href="/giaodich">
+            <i class="fa-solid fa-registered" style="color: #ffffff;"></i>
+              &nbsp
+              Quản Lý Giao Dịch 
+          </a></li>
+      </ul>
+        </nav>
+      <div class="user-avatar">
+        <i class="fa-solid fa-user-tie" style="color: #ffffff;"></i>
+          <div class="dropdown">
+              <a href="/">Logout</a>
+          </div>
+      </div>
+  </header>
+    <table>
+        <thead>
+            <tr>
+                <th>Mã giao dịch</th>
+                <th>Người giao dịch</th>
+                <th>Ngày giờ giao dịch</th>
+                <th>Số tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% transactions.forEach(transaction => { %>
+                <tr>
+                    <td><%= transaction.transactionId %></td>
+                    <td><a href="/profile/<%= transaction.sender %>"><%= transaction.sender %></a></td>
+                    <td><%= transaction.transactionDate.toLocaleString() %></td>
+                    <td><%= transaction.amount.toLocaleString() %> VND</td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+</body>
+</html>
+

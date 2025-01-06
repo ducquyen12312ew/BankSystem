@@ -50,7 +50,7 @@
           <i class="fa-solid fa-user-tie" style="color: #ffffff;"></i>
             <div class="dropdown">
                 <a href="/profile">Profile</a>
-                <a href="#">Logout</a>
+                <a href="/">Logout</a>
             </div>
         </div>
     </header>
@@ -70,7 +70,14 @@
         <div class="section-balance">
           <div class="label">SỐ DƯ HIỆN CÓ</div>
           <div class="amount-container">
-            <div id="amount" class="amount"><%= data.amount.toLocaleString() %>đ</div>
+            <div id="amount" class="amount">
+              <% if (data && data.amount !== undefined) { %>
+                <%= data.amount.toLocaleString() %>đ
+              <% } else { %>
+                0đ <!-- Hiển thị số 0 nếu amount không tồn tại -->
+              <% } %>
+            </div>
+
             <button id="toggle-visibility" class="eye-icon">
               <i class="fa-regular fa-eye"></i>
             </button>
@@ -81,11 +88,11 @@
         <div class="section-actions">
           <div>
             <i class="fa-solid fa-hand-holding-dollar"></i>
-            <a href="/naptien">Nạp tiền</a>
+            <a href="/naptien">Nạp tiền/Rút tiền</a>
           </div>
           <div>
             <i class="fa-solid fa-right-to-bracket"></i>
-            <a href="/ruttien">Rút tiền</a>
+            <a href="/chuyentien">Chuyển tiền</a>
           </div>
         </div>
       </div>
@@ -120,13 +127,28 @@
     <h2 class="hover-effect" onclick="window.location.href='/shopping'">Mua Sắm</i></h2>
     <div class="section image-section5" onclick="window.location.href='/shopping'"></div>
 </div>
+
+  <div id="chat-widget">
+    <div id="chat-bubble">💬</div>
+    <div id="chat-container">
+      <h3>Hỗ trợ khách hàng</h3>
+      <div id="messages"></div>
+      <div id="chat-input-container">
+        <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." />
+        <button id="send-button">Gửi</button>
+      </div>
+    </div>
+  </div>
 </div>
+
 <div style="margin-bottom: 100px;"></div>
+
 </body>
 <script>
   const userAvatar = document.querySelector('.user-avatar');
   const dropdown = document.querySelector('.dropdown');
-
+  const sender = "<%= data.name %>"; // Tên user
+  const receiver = "admin"; // Mặc định admin nhận
   userAvatar.addEventListener('mouseenter', () => {
       dropdown.style.display = 'block';
   });
@@ -159,7 +181,70 @@
       eyeIcon.classList.add("fa-eye-slash");
     }
   });
+  document.getElementById('chat-bubble').addEventListener('click', function () {
+    const chatContainer = document.getElementById('chat-container');
+    chatContainer.style.display = chatContainer.style.display === 'none' ? 'block' : 'none';
+  });
   
+document.getElementById("send-button").addEventListener("click", async () => {
+  const messageInput = document.getElementById("chat-input");
+  const message = messageInput.value.trim();
+
+  if (!message) return alert("Vui lòng nhập tin nhắn!");
+
+  try {
+      // Gửi tin nhắn tới server
+      await fetch("/send-message", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sender, receiver, message }),
+      });
+
+      // Thêm tin nhắn của admin vào khung chat ngay lập tức
+      const messagesDiv = document.getElementById("messages");
+      const div = document.createElement("div");
+      div.textContent = `admin: ${message}`;
+      div.style.color = "blue"; // Đặt màu sắc đặc biệt cho admin (tuỳ chọn)
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight; // Cuộn xuống cuối khung chat
+
+      // Xóa nội dung ô nhập
+      messageInput.value = "";
+
+  } catch (error) {
+      console.error("Lỗi gửi tin nhắn:", error);
+  }
+});
+const fetchMessages = async () => {
+  try {
+      const response = await fetch(`/get-messages?sender=${sender}&receiver=${receiver}`);
+      const data = await response.json();
+      const messagesDiv = document.getElementById("messages");
+      messagesDiv.innerHTML = ""; // Xóa nội dung cũ trước khi hiển thị mới
+
+      if (data.success) {
+          data.messages.forEach(msg => {
+              const div = document.createElement("div");
+              div.textContent = `${msg.sender}: ${msg.message}`;
+              if (msg.sender === "admin") {
+                  div.style.color = "blue"; // Màu xanh cho tin nhắn admin
+              }
+              messagesDiv.appendChild(div);
+          });
+
+          // Tự động cuộn xuống cuối khung chat
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+  } catch (error) {
+      console.error("Lỗi tải tin nhắn:", error);
+  }
+};
+
+// Cập nhật tin nhắn theo chu kỳ
+setInterval(fetchMessages, 200);
+fetchMessages();
+
 </script>
+
 
 </html>

@@ -57,30 +57,46 @@
     <div class="notification-container">
       <% transactions.forEach((transaction, index) => { %>
         <div class="transaction-box <%= index % 2 === 0 ? 'white-box' : 'blue-box' %>" data-transaction='<%= JSON.stringify(transaction) %>'>
-            <div class="icon">
-                <% if (transaction.transactionType === 'deposit') { %>
-                    <i class="fa-solid fa-hand-holding-dollar" style="color: green;"></i>
-                <% } else if (transaction.transactionType === 'purchase') { %>
-                    <i class="fa-solid fa-cart-shopping" style="color: blue;"></i>
-                <% } else { %>
-                    <i class="fa-solid fa-money-bill" style="color: red;"></i>
-                <% } %>
+          <div class="icon">
+            <% if (transaction.transactionType === 'transfer') { %>
+              <i class="fa-solid fa-exchange-alt" style="color: orange;"></i>
+            <% } else if (transaction.transactionType === 'deposit') { %>
+              <i class="fa-solid fa-hand-holding-dollar" style="color: green;"></i>
+            <% } else if (transaction.transactionType === 'withdraw') { %>
+              <i class="fa-solid fa-money-bill" style="color: red;"></i>
+            <% } else if (transaction.transactionType === 'purchase') { %>
+              <i class="fa-solid fa-cart-shopping" style="color: blue;"></i>
+            <% } %>
             </div>
             <div class="details">
-                <div class="transaction-type">
-                    <strong>
-                        <%= transaction.transactionType === 'deposit' ? 'Nạp tiền' :
-                            transaction.transactionType === 'purchase' ? 'Mua hàng' : 'Rút tiền' %>
-                    </strong>
-                </div>
+              <div class="transaction-type">
+                <strong>
+                  <% if (transaction.transactionType === 'transfer') { %>
+                    Chuyển tiền
+                  <% } else if (transaction.transactionType === 'deposit') { %>
+                    Nạp tiền
+                  <% } else if (transaction.transactionType === 'withdraw') { %>
+                    Rút tiền
+                  <% } else if (transaction.transactionType === 'purchase') { %>
+                    Mua hàng
+                  <% } %>
+                </strong>
+              </div>
+
                 <div class="transaction-info">
-                    Mã giao dịch: <%= transaction.transactionId %><br>
-                    Ngày: <%= new Date(transaction.transactionDate).toLocaleString() %><br>
-                    Số tiền: <span class="transaction-amount"><%= transaction.amount.toLocaleString() %>đ</span><br>
-                    <%= transaction.description ? `Mô tả: ${transaction.description}` : '' %>
+                  Mã giao dịch: <%= transaction.transactionId %><br>
+                  Ngày: <%= new Date(transaction.transactionDate).toLocaleString() %><br>
+                  Số tiền: <span class="transaction-amount"><%= transaction.amount.toLocaleString() %>đ</span><br>
+                  <% if (transaction.transactionType === 'transfer') { %>
+                    Ngân hàng: <%= transaction.bank %><br>
+                    Số tài khoản: <%= transaction.receiver %><br>
+                    Mô tả: <%= transaction.description %>
+                  <% } else { %>
+                    Mô tả: <%= transaction.description %>
+                  <% } %>
                 </div>
+              </div>
             </div>
-        </div>
         <% }); %>
         
         

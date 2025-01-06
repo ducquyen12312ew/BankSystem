@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="chat.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  </head>
+  <body>
+    <header class="menu">
+      <div class="menu-logo">
+          <img src="image/logo_icon.png" alt="Website Logo">
+      </div>
+      <nav>
+        <ul class="horizontal-menu">
+          <li><a href="/admin">
+            <i class="fa-solid fa-wallet" style="color: #ffffff;"></i>
+            &nbsp
+              Trang Chính
+          </a></li>
+          <li><a href="/chat">
+            <i class="fa-brands fa-rocketchat" style="color: #ffffff;"></i>
+            &nbsp
+              Hỗ Trợ Khách Hàng
+          </a></li>
+          <li><a href="/giaodich">
+            <i class="fa-solid fa-registered" style="color: #ffffff;"></i>
+              &nbsp
+              Quản Lý Giao Dịch 
+          </a></li>
+
+      </ul>
+        </nav>
+      <div class="user-avatar">
+        <i class="fa-solid fa-user-tie" style="color: #ffffff;"></i>
+          <div class="dropdown">
+              <a href="#">Logout</a>
+          </div>
+      </div>
+  </header>
+  <div class="chat-container">
+    <!-- Danh sách người dùng -->
+    <div class="user-list">
+      <ul id="user-list">
+          <% users.forEach(user => { %>
+              <li id="user-<%= user.name %>" onclick="selectUser('<%= user.name %>')">
+                  <%= user.name %>
+                  <span class="unread-indicator" id="indicator-<%= user.name %>" style="display: none;">●</span>
+              </li>
+          <% }) %>
+      </ul>
+  </div>
+  
+
+    <!-- Khung chat -->
+    <div class="chat-box">
+        <div class="chat-header">
+            <h4 id="chat-with"></h4>
+        </div>
+        <div id="messages" class="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Nhập tin nhắn...">
+            <button id="send-button">Gửi</button>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+  const userAvatar = document.querySelector('.user-avatar');
+  const dropdown = document.querySelector('.dropdown');
+  const sender = "admin";
+
+  userAvatar.addEventListener('mouseenter', () => {
+      dropdown.style.display = 'block';
+  });
+
+  userAvatar.addEventListener('mouseleave', () => {
+      setTimeout(() => {
+          dropdown.style.display = 'none';
+      }, 5000); 
+  });
+
+  dropdown.addEventListener('mouseenter', () => {
+      dropdown.style.display = 'block';
+  });
+
+  dropdown.addEventListener('mouseleave', () => {
+      dropdown.style.display = 'none';
+  });
+  let receiver = null;
+
+        // Chọn người dùng để chat
+        const selectUser = async (userName) => {
+          receiver = userName;
+          document.getElementById('chat-with').textContent = `${receiver}`;
+          document.getElementById('chat-container').style.display = 'block';
+      
+          try {
+              // Đánh dấu tin nhắn đã đọc
+              await fetch(`/mark-messages-read`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ sender: receiver, receiver: '<%= currentUser %>' })
+              });
+              fetchMessages(); // Tải tin nhắn của người dùng đã chọn
+          } catch (error) {
+              console.error("Lỗi đánh dấu tin nhắn đã đọc:", error);
+          }
+      };
+      
+
+        // Gửi tin nhắn
+        document.getElementById('send-button').addEventListener('click', async () => {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+
+            if (!message || !receiver) return alert('Vui lòng chọn người dùng và nhập tin nhắn!');
+
+            try {
+                // Gửi tin nhắn tới server
+                await fetch('/send-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sender: '<%= currentUser %>', receiver, message }),
+                });
+
+                // Hiển thị tin nhắn của chính mình
+                const messagesDiv = document.getElementById('messages');
+                const div = document.createElement('div');
+                div.classList.add('message', 'sent');
+                div.textContent = message;
+                messagesDiv.appendChild(div);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                // Xóa nội dung ô nhập
+                messageInput.value = '';
+            } catch (error) {
+                console.error('Lỗi gửi tin nhắn:', error);
+            }
+        });
+
+        // Lấy tin nhắn
+        const fetchMessages = async () => {
+          if (!receiver) return;
+      
+          try {
+              const response = await fetch(`/get-messages?sender=<%= currentUser %>&receiver=${receiver}`);
+              const data = await response.json();
+              const messagesDiv = document.getElementById("messages");
+              messagesDiv.innerHTML = ""; // Xóa nội dung cũ
+      
+              if (data.success) {
+                  data.messages.forEach(msg => {
+                      const div = document.createElement("div");
+                      div.classList.add('message', msg.sender === '<%= currentUser %>' ? 'sent' : 'received');
+                      div.textContent = msg.message; // Chỉ hiển thị nội dung tin nhắn
+                      messagesDiv.appendChild(div);
+                  });
+                  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+              }
+          } catch (error) {
+              console.error("Lỗi tải tin nhắn:", error);
+          }
+      };
+      const checkUnreadMessages = async () => {
+        try {
+            const response = await fetch(`/unread-messages?receiver=<%= currentUser %>`);
+            const data = await response.json();
+    
+            if (data.success) {
+                // Ẩn tất cả chỉ báo trước
+                document.querySelectorAll('.unread-indicator').forEach(indicator => {
+                    indicator.style.display = 'none';
+                });
+    
+                // Hiển thị chỉ báo cho người có tin nhắn chưa đọc
+                data.unreadMessages.forEach(item => {
+                    const indicator = document.getElementById(`indicator-${item._id}`);
+                    if (indicator) {
+                        indicator.style.display = 'inline-block';
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Lỗi kiểm tra tin nhắn chưa đọc:", error);
+        }
+    };
+    
+    // Gọi hàm kiểm tra tin nhắn chưa đọc mỗi 5 giây
+    setInterval(checkUnreadMessages, 5000);
+    checkUnreadMessages();
+    
+
+        setInterval(fetchMessages, 1000); // Tải tin nhắn mỗi giây
+</script>
+
+
+</html>

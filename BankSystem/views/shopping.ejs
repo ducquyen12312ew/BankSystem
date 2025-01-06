@@ -86,8 +86,28 @@
                 <div class="price"><%= product.price.toLocaleString('vi-VN') %>đ</div>
             </div>
         <% }) %>
+        
     </div>
-
+<!-- Nhóm sản phẩm bổ sung -->
+<div class="section-title">Dịch Vụ Khác</div>
+<div class="product-container">
+    <% const otherServices = [
+        { id: 7, name: "Vé xem phim", price: 100000 },
+    ]; %>
+    <% otherServices.forEach(product => { %>
+        <div class="product" onclick="showPopup('<%= product.id %>', '<%= product.name %>', '<%= product.price %>')">
+            <div class="name"><%= product.name %></div>
+            <div class="price"><%= product.price.toLocaleString('vi-VN') %>đ</div>
+        </div>
+    <% }) %>
+</div>
+<div class="section-title"></div>
+    <div class="product-container">
+        <div class="product" onclick="showTicketPopup()">
+            <div class="name">Vé tàu</div>
+            <div class="price">300,000 - 600,000đ</div>
+        </div>
+    </div>
     <!-- Pop-up -->
     <div class="popup" id="popup">
         <h3 id="popupProductName"></h3>
@@ -97,6 +117,33 @@
         <button onclick="applyVoucher()">Áp dụng Voucher</button>
         <button onclick="confirmPayment()">Thanh Toán</button>
         <button class="close" onclick="closePopup()">Đóng</button>
+    </div>
+
+
+
+    <!-- Pop-up Vé Tàu -->
+    <div class="popup" id="ticketPopup" style="display:none;">
+        <h3>Mua Vé Tàu</h3>
+        <label for="departure">Điểm khởi hành:</label>
+        <select id="departure">
+            <option value="Hà Nội">Hà Nội</option>
+            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+            <option value="Đà Nẵng">Đà Nẵng</option>
+        </select>
+        <label for="destination">Điểm đến:</label>
+        <select id="destination">
+            <option value="Hà Nội">Hà Nội</option>
+            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+            <option value="Đà Nẵng">Đà Nẵng</option>
+        </select>
+        <label>
+            <input type="radio" name="ticketType" value="oneWay" checked> Một chiều (300,000đ)
+        </label>
+        <label>
+            <input type="radio" name="ticketType" value="roundTrip"> Khứ hồi (600,000đ)
+        </label>
+        <button onclick="confirmTicketPurchase()">Mua Vé</button>
+        <button onclick="closeTicketPopup()">Đóng</button>
     </div>
 
 
@@ -154,32 +201,73 @@
   }
 
   // Xác nhận thanh toán
-  async function confirmPayment() {
-      const finalPrice = selectedProduct.price - (selectedProduct.price * discountPercent / 100);
-      const confirmPayment = confirm(
-          `Bạn có chắc chắn muốn thanh toán ${selectedProduct.name} với giá ${finalPrice.toLocaleString('vi-VN')}đ?`
-      );
-      if (!confirmPayment) return;
+ async function confirmPayment() {
+    const finalPrice = selectedProduct.price - (selectedProduct.price * discountPercent / 100);
+    const confirmPayment = confirm(
+        `Bạn có chắc chắn muốn thanh toán ${selectedProduct.name} với giá ${finalPrice.toLocaleString('vi-VN')}đ?`
+    );
+    if (!confirmPayment) return;
+    // Lưu vào lịch sử giao dịch
+    try {
+        const trainTicketInfo = {
+            trainNumber: selectedProduct.trainNumber,
+            departureTime: selectedProduct.departureTime,
+            seatNumber: selectedProduct.seatNumber
+        };
+        const response = await fetch('/api/purchase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                productId: selectedProduct.id, 
+                price: finalPrice,
+                trainTicketInfo: trainTicketInfo
+            })
+        });
+        const result = await response.json();
+        if (result.success) {
+            alert(result.message);
+            location.reload();
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert('Có lỗi xảy ra.');
+    }
+}
 
-      try {
-          const response = await fetch('/api/purchase', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ productId: selectedProduct.id, price: finalPrice })
-          });
-          const result = await response.json();
-          if (result.success) {
-              alert(result.message);
-              location.reload();
-          } else {
-              alert(result.message);
-          }
-      } catch (error) {
-          alert('Có lỗi xảy ra.');
-      }
-  }
+//Vé tàu
+  function showTicketPopup() {
+    document.getElementById('ticketPopup').style.display = 'block';
+}
+
+function closeTicketPopup() {
+    document.getElementById('ticketPopup').style.display = 'none';
+}
+
+function confirmTicketPurchase() {
+    const departure = document.getElementById('departure').value;
+    const destination = document.getElementById('destination').value;
+    const ticketType = document.querySelector('input[name="ticketType"]:checked').value;
+    const price = ticketType === 'oneWay' ? 300000 : 600000;
+
+    if (departure === destination) {
+        alert('Điểm khởi hành và điểm đến không được trùng nhau.');
+        return;
+    }
+
+    const confirmMessage = `Bạn có chắc chắn muốn mua vé từ ${departure} đến ${destination} với giá ${price.toLocaleString('vi-VN')}đ?`;
+    if (confirm(confirmMessage)) {
+        // Cập nhật tài khoản và lưu lịch sử giao dịch (giả lập)
+        alert(`Mua vé thành công!\nThông tin giao dịch:\n- Điểm khởi hành: ${departure}\n- Điểm đến: ${destination}\n- Loại vé: ${ticketType === 'oneWay' ? 'Một chiều' : 'Khứ hồi'}\n- Giá: ${price.toLocaleString('vi-VN')}đ`);
+
+        // Lưu lịch sử giao dịch vào hệ thống (giả lập)
+        console.log(`Lịch sử giao dịch: Mua vé tàu - Điểm khởi hành: ${departure}, Điểm đến: ${destination}, Loại vé: ${ticketType}, Giá: ${price}`);
+
+        closeTicketPopup();
+    }
+}
 </script>
 
 </html>

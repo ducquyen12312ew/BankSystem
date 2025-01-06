@@ -330,3 +330,78 @@ body {
 .info-link:hover {
     color: blue;
 }
+
+
+#chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    z-index: 9999;
+  }
+  
+  #chat-bubble {
+    width: 60px;
+    height: 60px;
+    background-color: #6ab1eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+  }
+  
+  #chat-bubble:hover {
+    transform: scale(1.1);
+  }
+  
+  #chat-container {
+    display: none;
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 300px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 9999; 
+  }
+  
+  #chat-container h3 {
+    margin: 0;
+    background-color: #6ab1eb;
+    color: white;
+    text-align: center;
+    padding: 10px;
+  }
+  
+  #messages {
+    height: 250px;
+    overflow-y: scroll;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  #chat-input-container {
+    display: flex;
+    border-top: 1px solid #ccc;
+  }
+  
+  #chat-input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+  }
+  
+  #send-button {
+    padding: 10px;
+    background-color: #6ab1eb;
+    color: white;
+    border: none;
+  }
+  

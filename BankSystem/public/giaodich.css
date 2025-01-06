@@ -1,0 +1,149 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f7f7fc;
+}
+
+.menu {
+    background: linear-gradient(135deg, #84b9e0, #6ab1eb);
+    padding: 10px 15px; 
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.menu-logo {
+    display: flex;
+    align-items: center;
+}
+
+.menu-logo img {
+    width: 160px;
+    height: 50px;
+    margin-right: 10px;
+}
+.horizontal-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.horizontal-menu li {
+    display: flex;
+    align-items: center;
+    margin: 0 15px;
+}
+
+.horizontal-menu li a {
+    text-decoration: none;
+    font-size: 16px;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.horizontal-menu li a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.horizontal-menu li a svg {
+    margin-right: 8px;
+}
+.user-avatar {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.dropdown a {
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown a:last-child {
+    border-bottom: none;
+}
+
+.dropdown a:hover {
+    background: #f7f7fc;
+}
+
+.user-avatar:hover .dropdown {
+    display: block;
+}
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+table th {
+  background-color: #6ab1eb;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+table td a {
+  color: #6ab1eb;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+table td a:hover {
+  text-decoration: underline;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 14px;
+  color: #666;
+}

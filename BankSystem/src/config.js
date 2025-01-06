@@ -22,11 +22,16 @@ const Loginschema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true
+    },    
+    role: {
+        type: String,
+        enum: ["admin", "user"], // Chỉ cho phép giá trị admin hoặc user
+        default: "user"
     },
     amount: {
         type: Number,
         required: true,
-        default: 5930293 // Set default amount
+        default: 0 // Set default amount
     },
     saving: {
         type: Number,
@@ -45,8 +50,15 @@ const Loginschema = new mongoose.Schema({
         type: Number,
         default: 0 // Thời hạn còn lại (tháng)
     }
+    
 });
 
+const MessageSchema = new mongoose.Schema({
+    sender: { type: String, required: true }, // admin hoặc user
+    receiver: { type: String, required: true }, // admin hoặc user
+    message: { type: String, required: true },
+    timestamp: { type: Date, default: Date.now }
+});
 // Middleware để tạo số tài khoản ngẫu nhiên trước khi lưu
 Loginschema.pre('save', function(next) {
     if (!this.accountNumber) {
@@ -54,6 +66,7 @@ Loginschema.pre('save', function(next) {
     }
     next();
 });
+
 
 // Model cho thông tin đăng nhập
 const UserCollection = mongoose.model("users", Loginschema);
@@ -65,10 +78,11 @@ const TransactionSchema = new mongoose.Schema({
     receiver: { type: String, required: true },
     amount: { type: Number, required: true },
     transactionDate: { type: Date, default: Date.now },
-    transactionType: { type: String, enum: ['deposit', 'withdraw','purchase'], required: true },
+    transactionType: { type: String, enum: ['deposit', 'withdraw', 'purchase', 'transfer'], required: true },
     description: { type: String, required: false }
 });
 
-const TransactionCollection = mongoose.model("transactions", TransactionSchema);
 
-module.exports = { UserCollection, TransactionCollection};
+const TransactionCollection = mongoose.model("transactions", TransactionSchema);
+const MessageCollection = mongoose.model("messages", MessageSchema);
+module.exports = { UserCollection, TransactionCollection, MessageCollection };

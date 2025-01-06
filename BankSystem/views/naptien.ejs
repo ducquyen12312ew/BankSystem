@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NapTien</title>
+    <title>Nạp và Rút Tiền</title>
     <link rel="stylesheet" href="naptien.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -56,11 +56,14 @@
     <div class="container">
       <div class="header">
         <img src="image/wall.png" alt="Wallet Icon" class="icon">
-        <h1>NẠP TIỀN</h1>
+        <div class="header">
+          <button id="depositBtn" class="toggle-btn active">NẠP TIỀN</button>
+          <button id="withdrawBtn" class="toggle-btn">RÚT TIỀN</button>
+        </div>
       </div>
       <div class="amount-container">
-        <h2>SỐ TIỀN NẠP:</h2>
-        <input type="text" id="totalAmount" readonly value="0 VND">
+        <h2 id="transactionType">SỐ TIỀN NẠP:</h2>
+        <input type="text" id="totalAmount" value="0 VND">
       </div>
       <div class="denominations">
         <button class="amount-btn" data-value="50000">50,000 VND</button>
@@ -73,9 +76,9 @@
         <button class="amount-btn" data-value="10000000">10,000,000 VND</button>
       </div>
       <button id="resetAmount">Đặt lại</button>
-      <button id="payAmount">Thanh toán</button>
+      <button id="payAmount">Xác nhận</button>
       <div class="method-container">
-        <h2>Phương thức nạp:</h2>
+        <h2>Phương thức:</h2>
         <select id="paymentMethod">
           <option value="bank">Ngân hàng</option>
           <option value="momo">MoMo</option>
@@ -85,70 +88,96 @@
     </div>
 </body>
 <script>
-  const userAvatar = document.querySelector('.user-avatar');
-  const dropdown = document.querySelector('.dropdown');
-    document.addEventListener('DOMContentLoaded', () => {
-      const buttons = document.querySelectorAll('.amount-btn');
-      const totalAmount = document.getElementById('totalAmount');
-      const resetButton = document.getElementById('resetAmount');
-      const payButton = document.getElementById('payAmount');
-  
-      buttons.forEach(button => {
-        button.addEventListener('click', () => {
-          const value = parseInt(button.getAttribute('data-value'), 10);
-          if (isNaN(value)) {
-            console.error('Invalid data-value attribute for button:', button);
-            return;
-          }
-  
-          const currentAmount = parseInt(totalAmount.value.replace(/\D/g, ''), 10) || 0;
-          const newAmount = currentAmount + value;
-          totalAmount.value = newAmount.toLocaleString('vi-VN') + ' VND';
-          console.log('Updated total amount:', totalAmount.value);
-        });
-      });
-  
-      resetButton.addEventListener('click', () => {
-        totalAmount.value = '0 VND';
-        console.log('Total amount reset to 0 VND');
-      });
-  
-      payButton.addEventListener('click', () => {
-        const amount = parseInt(totalAmount.value.replace(/\D/g, ''), 10) || 0;
-    
-        if (amount <= 0) {
-            alert("Số tiền nạp phải lớn hơn 0");
-            return;
-        }
-    
-        // Thay đổi đường dẫn `/update-amount` theo API bạn muốn sử dụng
-        fetch('/update-amount', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ amount })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-              const totalAmount = document.getElementById('totalAmount').value; // Assuming totalAmount is an input field
-              alert('Đã nạp ' + totalAmount + ' vào tài khoản');
-              document.getElementById('totalAmount').value = '0 VND'; // Reset số tiền
-          } else {
-              alert('Nạp tiền thất bại: ' + data.message);
-          }
-      })
-        .catch(error => {
-            console.error('Error updating amount:', error);
-            alert('Đã xảy ra lỗi khi nạp tiền. Vui lòng thử lại sau.');
-        });
+  document.addEventListener('DOMContentLoaded', () => {
+    const depositBtn = document.getElementById('depositBtn');
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    const transactionType = document.getElementById('transactionType');
+    const payButton = document.getElementById('payAmount');
+    const buttons = document.querySelectorAll('.amount-btn');
+    const totalAmount = document.getElementById('totalAmount');
+    const resetButton = document.getElementById('resetAmount');
+
+    let isDeposit = true;
+
+    depositBtn.addEventListener('click', () => {
+      isDeposit = true;
+      depositBtn.classList.add('active');
+      withdrawBtn.classList.remove('active');
+      transactionType.textContent = 'SỐ TIỀN NẠP:';
+      payButton.textContent = 'Thanh toán';
     });
-  });
+
+    withdrawBtn.addEventListener('click', () => {
+      isDeposit = false;
+      withdrawBtn.classList.add('active');
+      depositBtn.classList.remove('active');
+      transactionType.textContent = 'SỐ TIỀN RÚT:';
+      payButton.textContent = 'Rút tiền';
     
-  </script>
+      // Redirect to /ruttien
+      window.location.href = '/ruttien';
+    });
 
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const value = parseInt(button.getAttribute('data-value'), 10);
+        if (isNaN(value)) {
+          console.error('Invalid data-value attribute for button:', button);
+          return;
+        }
+
+        const currentAmount = parseInt(totalAmount.value.replace(/\D/g, ''), 10) || 0;
+        const newAmount = currentAmount + value;
+        totalAmount.value = newAmount.toLocaleString('vi-VN') + ' VND';
+        console.log('Updated total amount:', totalAmount.value);
+      });
+    });
+
+    resetButton.addEventListener('click', () => {
+      totalAmount.value = '0 VND';
+      console.log('Total amount reset to 0 VND');
+    });
+
+    payButton.addEventListener('click', () => {
+      const amount = parseInt(totalAmount.value.replace(/\D/g, ''), 10) || 0;
   
-</script>
+      if (amount <= 0) {
+          alert("Số tiền nạp phải lớn hơn 0");
+          return;
+      }
 
+      fetch('/update-amount', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ amount })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+          const totalAmount = document.getElementById('totalAmount').value; // Assuming totalAmount is an input field
+          alert('Đã nạp ' + totalAmount + ' vào tài khoản');
+          document.getElementById('totalAmount').value = '0 VND'; // Reset số tiền
+      } else {
+          alert('Nạp tiền thất bại: ' + data.message);
+      }
+  })
+    .catch(error => {
+        console.error('Error updating amount:', error);
+        alert('Đã xảy ra lỗi khi nạp tiền. Vui lòng thử lại sau.');
+    });
+});
+});
+
+    totalAmount.addEventListener('input', () => {
+      let inputValue = totalAmount.value.replace(/\D/g, '');
+      if (isNaN(inputValue) || inputValue === '') {
+        totalAmount.value = '0 VND';
+        return;
+      }
+      totalAmount.value = parseInt(inputValue, 10).toLocaleString('vi-VN') + ' VND';
+    });
+ 
+</script>
 </html>

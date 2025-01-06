@@ -150,9 +150,7 @@ h1 {
     display: none;
     z-index: 1000;
 }
-.popup h3 {
-    margin: 0 0 10px;
-}
+
 .popup input {
     width: 100%;
     padding: 10px;
@@ -160,19 +158,71 @@ h1 {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-.popup button {
-    padding: 10px 20px;
-    background-color: #0078d7;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-.popup button:hover {
-    background-color: #005bb5;
-}
+
 .popup .close {
     margin-top: 10px;
     background-color: #ccc;
 }
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    z-index: 1000;
+  }
+
+  .popup h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #333;
+  }
+
+  .popup label {
+    font-family: 'Montserrat', sans-serif;
+    display: block;
+    margin: 10px 0 5px;
+    color: #555;
+  }
+
+  .popup select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  .popup button {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .popup button:hover {
+    background-color: #45a049;
+  }
+
+  .popup button:nth-child(2) {
+    background-color: #f44336;
+  }
+
+  .popup button:nth-child(2):hover {
+    background-color: #e41e1e;
+  }
+
+  .popup input[type="radio"] {
+    margin-right: 5px;
+  }
