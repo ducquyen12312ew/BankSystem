@@ -15,7 +15,7 @@ cd BankSystem-main
 node -v
 npm -v
 ```
--Then install `nodemon`:
+- Then install `nodemon`:
 ```bash
 npm install -g nodemon
 ```
