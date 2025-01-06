@@ -37,8 +37,8 @@ You can open the admin site to view the database in a user-friendly GUI. Open th
 localhost:5000/admin
 ```
 Then, log in using admin account:
-- Username: admin
-- Password: admin123
+- Username: `admin`
+- Password: `admin123`
 
 
 
