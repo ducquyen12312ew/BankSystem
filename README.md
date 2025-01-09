@@ -20,6 +20,10 @@ npm -v
 npm install -g nodemon
 ```
 - Download `MongoDB`: [MongoDB Compass](https://www.mongodb.com/try/download/community)
+- Then copy the command into terminal to install `mongoose` to interact with MongoDB:
+```bash
+npm install mongoose
+```
 # Run the website
 From the directory of the repository, run the following:
 ```bash
